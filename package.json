@@ -2,12 +2,13 @@
   "name": "event-driven-microservices",
   "version": "1.0.0",
   "description": "Event-driven microservices system with Node.js and MongoDB",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "async_hooks": "^1.0.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

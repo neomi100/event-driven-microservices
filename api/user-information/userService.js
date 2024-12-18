@@ -1,5 +1,7 @@
-const dbService = require('../services/db.service')
+const dbService = require('../../services/db.service')
 const { ObjectId } = require('mongodb')
+const logger = require('../../services/logger.service')
+
 
 async function getById(userId) {
   try {
@@ -8,7 +10,7 @@ async function getById(userId) {
     delete user.password
     return user
   } catch (error) {
-    console.error(`User not found ${userId}`, error)
+    logger.error(`User not found ${userId}`, error)
     throw error
   }
 }
@@ -18,7 +20,7 @@ async function getByUsername(username) {
     const collection = await dbService.getCollection('users')
     return await collection.findOne({ username })
   } catch (error) {
-    console.error(`User not found ${username}`, error)
+    logger.error(`User not found ${username}`, error)
     throw error
   }
 }
@@ -28,7 +30,7 @@ async function remove(userId) {
     const collection = await dbService.getCollection('users')
     await collection.deleteOne({ '_id': new ObjectId(userId) })
   } catch (error) {
-    console.error(`Failed remove user ${userId}`, error)
+    logger.error(`Failed remove user ${userId}`, error)
     throw error
   }
 }
@@ -51,9 +53,10 @@ async function update(user, userId) {
     }
     const result = await collection.updateOne({ '_id': objectId }, { $set: updatedUser })
     if (result.matchedCount === 0) throw new Error('Failed to update user');
+    delete updatedUser.password
     return updatedUser;
   } catch (error) {
-    console.error(`Failed update user ${userId}`, error)
+    logger.error(`Failed update user ${userId}`, error)
     throw error
   }
 }
@@ -69,7 +72,7 @@ async function add(user) {
     await collection.insertOne(userToAdd)
     return userToAdd
   } catch (error) {
-    console.error(`Failed insert user ${user}`, error)
+    logger.error(`Failed insert user ${user}`, error)
     throw error
   }
 }

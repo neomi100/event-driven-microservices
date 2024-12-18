@@ -1,4 +1,6 @@
-const authModel = require('./authModel');
+const authModel = require('./authService');
+const logger = require('../../services/logger.service')
+
 
 async function login(req, res) {
   try {
@@ -7,7 +9,7 @@ async function login(req, res) {
     req.session.user = user
     res.json({ message: 'Login successfully!', user: user });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -20,7 +22,7 @@ async function signup(req, res) {
     req.session.user = user
     res.json({ message: 'Signup successfully!', user: user })
   } catch (error) {
-    console.error('Failed to signup', error)
+    logger.error('Failed to signup', error)
     res.status(500).send({ error: 'Failed to signup' })
   }
 };

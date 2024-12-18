@@ -1,5 +1,5 @@
 const express = require('express')
-const { requireAuth } = require('../services/require.auth')
+const { requireAuth } = require('../../middlewares/require.auth.middleware')
 const { getUser, deleteUser, updateUser } = require('./userController')
 const router = express.Router()
 

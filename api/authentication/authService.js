@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
-const userModel = require('../user-service/userModel')
+const userModel = require('../user-information/userService')
+const logger = require('../../services/logger.service')
 
 
 async function login(username, password) {
@@ -13,7 +14,7 @@ async function login(username, password) {
         delete user.password
         return user
     } catch (error) {
-        console.error(`Failed to login ${username}`, error)
+        logger.error(`Failed to login ${username}`, error)
         throw error
     }
 }
@@ -30,7 +31,7 @@ async function signup(username, password) {
         const hash = await bcrypt.hash(password, saltRounds)
         return userModel.add({ username, password: hash })
     } catch (error) {
-        console.error(`Failed to signup ${username}`, error)
+        logger.error(`Failed to signup ${username}`, error)
         throw error
     }
 }
