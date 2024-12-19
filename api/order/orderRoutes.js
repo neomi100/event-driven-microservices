@@ -2,8 +2,8 @@ const express = require('express')
 const { requireAuth } = require('../../middlewares/require.auth.middleware')
 const { log } = require('../../middlewares/logger.middleware')
 const { addOrder, getOrderById, updateOrder, getOrderByUserId, cancelOrder } = require('./orderController')
-const router = express.Router()
 
+const router = express.Router()
 
 router.post('/', log, requireAuth, addOrder)
 router.get('/by/:id', log, requireAuth, getOrderById)

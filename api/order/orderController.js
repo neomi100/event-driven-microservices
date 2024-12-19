@@ -32,6 +32,8 @@ async function getOrderByUserId(req, res) {
     try {
         const userId = req.session.user._id
         if (!userId) throw new Error('You must login to access your order');
+        const paramsUserId = req.params.id;
+        if (paramsUserId !== userId) throw new Error('The information does not match');
         const order = await orderService.getByUserId(userId);
         res.json({ message: `Your order number ${order.number}`, order })
     } catch (error) {
@@ -45,8 +47,9 @@ async function updateOrder(req, res) {
         const loggedinUserId = req.session.user._id
         const order = req.body;
         if (!order) throw new Error('Details must be filled in for updating');
-        const { userId } = order
+        const { userId, status } = order
         if (!userId) throw new Error('You must login to access your order');
+        if (status === 'cancelled') throw new Error('The order cannot be updated because it has been cancelled');
         if (userId !== loggedinUserId) throw new Error('The information does not match');
         const { orderId } = req.params
         const updatedOrder = await orderService.save(order, orderId);

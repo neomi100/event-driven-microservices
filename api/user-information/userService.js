@@ -25,23 +25,13 @@ async function getByUsername(username) {
   }
 }
 
-async function remove(userId) {
-  try {
-    const collection = await dbService.getCollection('users')
-    await collection.deleteOne({ '_id': new ObjectId(userId) })
-  } catch (error) {
-    logger.error(`Failed remove user ${userId}`, error)
-    throw error
-  }
-}
-
 async function update(user, userId) {
   try {
     const userToUpdate = { ...user };
     const collection = await dbService.getCollection('users');
     const objectId = new ObjectId(userId);
     await collection.updateOne({ '_id': objectId }, { $set: userToUpdate })
-    const updatedUser =await collection.findOne({ '_id': objectId });
+    const updatedUser = await collection.findOne({ '_id': objectId });
     delete updatedUser.password
     return updatedUser
   } catch (error) {
@@ -65,12 +55,22 @@ async function add(user) {
   }
 }
 
+async function remove(userId) {
+  try {
+    const collection = await dbService.getCollection('users')
+    await collection.deleteOne({ '_id': new ObjectId(userId) })
+  } catch (error) {
+    logger.error(`Failed remove user ${userId}`, error)
+    throw error
+  }
+}
+
 
 module.exports = {
   getById,
   getByUsername,
-  remove,
   update,
-  add
+  add,
+  remove
 }
 

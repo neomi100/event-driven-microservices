@@ -6,7 +6,7 @@ const logger = require('../../services/logger.service')
 async function login(username, password) {
     try {
         const user = await userService.getByUsername(username)
-        if (!user) throw new Error('Invalid username')
+        if (!user) throw new Error('The username is not registered')
         const match = await bcrypt.compare(password, user.password)
         if (!match) throw new Error('Invalid password')
         delete user.password
@@ -24,7 +24,9 @@ async function signup(username, password) {
         if (user) throw new Error('Username is alrady taken.');
         const saltRounds = 10
         const hash = await bcrypt.hash(password, saltRounds)
-        return userService.add({ username, password: hash })
+        const addUser = await userService.add({ username, password: hash })
+        delete addUser.password
+        return addUser
     } catch (error) {
         logger.error(`Failed to signup ${username}`, error)
         throw error

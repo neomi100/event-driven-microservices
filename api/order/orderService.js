@@ -28,7 +28,7 @@ async function getById(orderId, userId) {
     try {
         const collection = await dbService.getCollection('orders');
         const order = await collection.findOne({ _id: new ObjectId(orderId) });
-        if (!order) throw new Error('No order found');
+        if (!order) throw new Error('Order not found');
         if (order.userId !== userId) throw new Error('The information does not match');
         return order;
     } catch (error) {
@@ -42,7 +42,7 @@ async function getByUserId(userId) {
         const collection = await dbService.getCollection('orders');
         const order = await collection.find({ userId }).toArray();
         if (!order) throw new Error('No order found');
-        if (order.userId!==userId) throw new Error('No order found');
+        if (order[0].userId !== userId) throw new Error('The information does not match');
         return order;
     } catch (error) {
         logger.error(`Order not found`, error)
@@ -50,9 +50,9 @@ async function getByUserId(userId) {
     }
 }
 
-async function save(order, orderId) {
+async function save(updateOrder, orderId) {
     try {
-        const orderToUpdate = JSON.parse(JSON.stringify(order));
+        const orderToUpdate = JSON.parse(JSON.stringify(updateOrder));
         orderToUpdate.updatedAt.push(formattedDate)
         const collection = await dbService.getCollection('orders');
         const objectId = new ObjectId(orderId);
@@ -66,12 +66,12 @@ async function save(order, orderId) {
 
 async function cancel(orderId, loggedinUserId) {
     try {
-        const { userId } = await getById(orderId)
+        const { userId, status } = await getById(orderId, loggedinUserId)
         if (userId !== loggedinUserId) throw new Error('The information does not match');
+        if (status === 'cancelled') throw new Error('The order has already been cancelled');
         const collection = await dbService.getCollection('orders')
         const objectId = new ObjectId(orderId);
-        await collection.updateOne({ '_id': objectId }, { $set: { status: 'cancelled' } });
-        return
+        return await collection.updateOne({ '_id': objectId }, { $set: { status: 'cancelled' } });
     } catch (error) {
         logger.error(`Failed cancle order ${orderId}`, error)
         throw error

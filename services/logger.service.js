@@ -1,4 +1,4 @@
-const fs = require('fs').promises; 
+const fs = require('fs').promises;
 const path = require('path');
 const { AsyncLocalStorage } = require('async_hooks');
 const asyncLocalStorage = new AsyncLocalStorage();
@@ -14,9 +14,9 @@ class Logger {
             WARN: 2,
             ERROR: 3
         };
-        
-        this.minLevel = process.env.NODE_ENV === 'production' 
-            ? this.logLevels.INFO 
+
+        this.minLevel = process.env.NODE_ENV === 'production'
+            ? this.logLevels.INFO
             : this.logLevels.DEBUG;
 
         this.initializeLogDir();
@@ -31,7 +31,7 @@ class Logger {
     }
 
     getTime() {
-        return new Date().toISOString(); 
+        return new Date().toISOString();
     }
 
     isError(e) {
